@@ -1,9 +1,12 @@
+using GameBacklog.api.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
+builder.Services.AddSingleton<IGameStore, InMemoryGameStore>();
 
 var app = builder.Build();
 
