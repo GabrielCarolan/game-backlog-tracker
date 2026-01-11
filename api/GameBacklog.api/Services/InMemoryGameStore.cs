@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace GameBacklog.api.Services;
 
+
 public class InMemoryGameStore : IGameStore
 {
     private static readonly List<Game> Games =
