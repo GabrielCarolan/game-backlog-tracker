@@ -420,3 +420,8 @@ FodyWeavers.xsd
 # MacOS system file created by finder
 .DS_Store
 
+# SQLite
+*.db
+*.db-wal
+*.db-shm
+

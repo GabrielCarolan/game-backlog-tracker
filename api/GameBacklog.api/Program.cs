@@ -4,13 +4,20 @@ using GameBacklog.api.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("Default Connection");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new InvalidOperationException("DefaultConnection connection string is missing or empty.");
+}
+
+Console.WriteLine($"EF Core using connection string: {connectionString}");
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
-builder.Services.AddSingleton<IGameStore, InMemoryGameStore>();
+builder.Services.AddScoped<IGameStore, EfCoreGameStore>();
 builder.Services.AddDbContext<GameBacklogDbContext>(options => options.UseSqlite(connectionString));
 
 var app = builder.Build();

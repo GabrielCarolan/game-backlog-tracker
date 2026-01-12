@@ -16,7 +16,7 @@ public class UpdateGameRequest
 
     public GameStatus Status { get; set; } = GameStatus.NotPlayed;
 
-    [Range(1, 5)]
+    [Range(1, 10)]
     public int? Rating { get; set; }
 
     [MaxLength(2000)]
