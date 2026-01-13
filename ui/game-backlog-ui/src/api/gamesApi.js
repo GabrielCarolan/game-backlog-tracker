@@ -48,3 +48,36 @@ export async function getGames() {
     // "return" sends the parsed data back to the caller.
     return await res.json();
 }
+
+// POST /api/games
+export async function addGame(game) {
+    const res = await fetch(`${API_BASE}/api/games`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(game),
+    });
+
+    if (!res.ok) {
+        // Try to read error details (often JSON, somtimes text)
+        const contentType = res.headers.get("content-type") ?? "";
+        if (contentType.includes("application/json")) 
+        {
+            const errJson = await res.json();
+
+            // Common ASP.NET validation format includes "title" and/or "errors"
+            const message =
+                errJson.title || (errJson.errors ? JSON.stringify(errJson.errors) : JSON.stringify(errJson));
+
+            throw new Error(`API error ${res.status}: ${message}`);
+        } else {
+            const text = await res.text();
+            throw new Error(`API error ${res.status}: ${text.slice(0, 200)}`);
+        }
+    }
+
+    // Your API likely returns the created game (201 Created)
+    return await res.json();
+}
+
