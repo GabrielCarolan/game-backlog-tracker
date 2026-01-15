@@ -10,15 +10,14 @@ namespace GameBacklog.api.Controllers;
 [Route("api/[controller]")]
 public class GamesController : ControllerBase
 {
-
     private readonly IGameStore _store;
 
+    //constructor
     public GamesController(IGameStore store)
     {
         _store = store;
     }
     
-
     // GET /api/games
     [HttpGet]
     public ActionResult<IEnumerable<Game>> GetAll()

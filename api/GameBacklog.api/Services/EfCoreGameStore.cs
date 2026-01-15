@@ -13,7 +13,7 @@ public class EfCoreGameStore : IGameStore
         _db = db;
     }
 
-    // Q:What is .AsNoTracking() doing?
+    // Q:What is .AsNoTracking() doing? A:I am only reading data. Don't track changes
     public IEnumerable<Game> GetAll() => _db.Games.AsNoTracking().OrderBy(g => g.Id).ToList();
 
     public Game? GetById(int id) => _db.Games.AsNoTracking().FirstOrDefault(g => g.Id == id);
