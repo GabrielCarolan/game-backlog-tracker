@@ -13,13 +13,4 @@ public class UpdateGameRequest
 
     [Range(1950, 2100)]
     public int? ReleaseYear { get; set; }
-
-    public GameStatus Status { get; set; } = GameStatus.NotPlayed;
-
-    [Range(1, 10)]
-    public int? Rating { get; set; }
-
-    [MaxLength(2000)]
-    public string? Notes { get; set; }
-
 }

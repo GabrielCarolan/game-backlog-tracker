@@ -45,12 +45,8 @@ public class GamesController : ControllerBase
             Title = request.Title,
             Platform = request.Platform,
             ReleaseYear = request.ReleaseYear,
-            Status = request.Status,
-            Rating = request.Rating,
-            Notes = request.Notes,
         };
 
-        
         var created = _store.Add(game);
         // 201 Created + Location header pointing to GET /api/games/{id}
         return CreatedAtAction(nameof(GetById), new {id = game.Id}, created);
@@ -65,9 +61,6 @@ public class GamesController : ControllerBase
             Title = request.Title,
             Platform = request.Platform,
             ReleaseYear = request.ReleaseYear,
-            Status = request.Status,
-            Rating = request.Rating,
-            Notes = request.Notes
         };
 
         if (!_store.Update(id, updated)) return NotFound();

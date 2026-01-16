@@ -101,7 +101,7 @@ function App() {
 
       // Refresh list from server (ensures we get the new ID, etc.)
       await loadGames();
-    } catch (e2) {
+    } catch (e2) { //e2 is error object not event object
       setFormError(e2?.message ?? "Failed to add game");
     } finally {
       setSubmitting(false);
@@ -254,12 +254,11 @@ function App() {
           <ul>
             {games.map((g) => (
             <li key={g.id} style={{ marginBottom: 10 }}>
-              {editingId === g.id ? (
+              {editingId === g.id ? ( //Has the user chosen to edit this game?
                 <div style={{ border: "1px solid #ddd", padding: 10 }}>
                   <strong>Editing</strong>
 
                   {editError && <p style={{ color: "crimson" }}>{editError}</p>}
-
 
                 <div style={{ display: "grid", gap: 8, marginTop: 8}}> 
                   <label>

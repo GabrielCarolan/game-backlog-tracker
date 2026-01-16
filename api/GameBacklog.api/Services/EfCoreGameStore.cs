@@ -20,8 +20,6 @@ public class EfCoreGameStore : IGameStore
 
     public Game Add(Game game)
     {
-        game.DateAddedUtc = DateTime.UtcNow;
-
         _db.Games.Add(game);
         _db.SaveChanges();
 
@@ -36,9 +34,6 @@ public class EfCoreGameStore : IGameStore
         existing.Title = updated.Title;
         existing.Platform = updated.Platform;
         existing.ReleaseYear = updated. ReleaseYear;
-        existing.Status = updated.Status;
-        existing.Rating = updated.Rating;
-        existing.Notes = updated.Notes;
 
         _db.SaveChanges();
         return true;
