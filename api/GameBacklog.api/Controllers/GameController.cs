@@ -3,6 +3,7 @@ using GameBacklog.api.Models;
 using GameBacklog.api.Dtos;
 using System.Dynamic;
 using GameBacklog.api.Services;
+using GameBacklog.api.Data;
 
 namespace GameBacklog.api.Controllers;
 

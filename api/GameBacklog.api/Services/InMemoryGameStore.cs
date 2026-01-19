@@ -14,9 +14,6 @@ public class InMemoryGameStore : IGameStore
             Title = "Hades",
             Platform = "PC",
             ReleaseYear = 2020,
-            Status = GameStatus.Played,
-            Rating = 10,
-            DateAddedUtc = DateTime.UtcNow
         },
 
         new Game 
@@ -25,8 +22,6 @@ public class InMemoryGameStore : IGameStore
             Title = "The Legend of Zelda: Breath of the Wild",
             Platform = "Switch",
             ReleaseYear = 2017,
-            Status = GameStatus.Playing,
-            DateAddedUtc = DateTime.UtcNow
         },
 
         new Game 
@@ -35,8 +30,6 @@ public class InMemoryGameStore : IGameStore
             Title = "Grand Theft Auto 6",
             Platform = "PS5",
             ReleaseYear = 2026,
-            Status = GameStatus.NotPlayed,
-            DateAddedUtc = DateTime.UtcNow
         }
     ];
 
@@ -49,7 +42,6 @@ public class InMemoryGameStore : IGameStore
         var nextId = Games.Count == 0 ? 1 : Games.Max(g => g.Id) + 1;
 
         game.Id = nextId;
-        game.DateAddedUtc = DateTime.UtcNow;
 
         Games.Add(game);
         return game;
@@ -63,9 +55,6 @@ public class InMemoryGameStore : IGameStore
         existing.Title = updated.Title;
         existing.Platform = updated.Platform;
         existing.ReleaseYear = updated.ReleaseYear;
-        existing.Status = updated.Status;
-        existing.Rating = updated.Rating;
-        existing.Notes = updated.Notes;
         
         return true;
     }
