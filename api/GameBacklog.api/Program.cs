@@ -22,12 +22,14 @@ Console.WriteLine($"EF Core using connection string: {connectionString}");
 // Register services (Dependency Injection container)
 // ------------------------------
 // Add services to the container.
-builder.Services.AddEndpointsApiExplorer(); // Adds minimal metadata endpoints used by Swagger/OpenAPI generation
-builder.Services.AddSwaggerGen(); // Registers Swagger generator so your API can produce OpenAPI docs
+// DI Related (Service Registration)
 builder.Services.AddControllers(); // Registers MVC controllers (so [ApiController] + routing attributes work)
 builder.Services.AddScoped<IGameStore, EfCoreGameStore>(); // DI registration: whenever something asks for IGameStore, create an EfCoreGameStore and inject it (scoped = once per HTTP request)
 builder.Services.AddScoped<ILogStore, EfCoreLogStore>();
 builder.Services.AddDbContext<GameBacklogDbContext>(options => options.UseSqlite(connectionString)); // Registers your EF Core DbContext. scoped by default (one per request). options.UseSqlite(connectionString) tells EF Core to use SQLite with your connection string.
+// Framework Infrastructure (Not DI per se)
+builder.Services.AddSwaggerGen(); // Registers Swagger generator so your API can produce OpenAPI docs
+builder.Services.AddEndpointsApiExplorer(); // Adds minimal metadata endpoints used by Swagger/OpenAPI generation
 builder.Services.AddCors(options => // Registers CORS policy so your frontend (running on localhost:5173) can call this API. Without this, the browser will block requests even if the API is running fine.
 {
     options.AddPolicy("AllowFrontend", policy =>    

@@ -39,32 +39,32 @@ async function requestJson(path, options) {
   return await res.json();
 }
 
-// GET /api/games
-export function getGames() {
-  return requestJson("/api/games");
+// GET /api/log
+export function getLog() {
+    return requestJson("/api/log");
 }
 
-// POST /api/games
-// Catalog: { title, releaseYear}
-export function addGame(game) {
-  return requestJson("/api/games", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(game),
-  });
+// POST /api/log
+// DTO: { gameId, platform, status, rating, notes}
+export function addToLog(log) {
+    return requestJson("/api/log", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(log),
+    });
 }
 
-// DELETE /api/games/{id}
-export async function deleteGame(id) {
-  await requestJson(`/api/games/${id}`, { method: "DELETE" });
+// PUT /api/log/{id}
+// DTO: {platform, status, rating, notes } 
+export async function updateLogEntry(id, log) {
+    await requestJson(`/api/log/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(log),
+    });
 }
 
-// PUT /api/games/{id}
-// Catalog DTO: { title, releaseYear }
-export async function updateGame(id, game) {
-  await requestJson(`/api/games/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(game),
-  });
+// DELETE /api/log/{id}
+export async function deleteLogEntry(id) {
+    await requestJson(`/api/log/${id}`, { method: "DELETE" });
 }

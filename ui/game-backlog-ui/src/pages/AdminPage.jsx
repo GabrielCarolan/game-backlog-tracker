@@ -10,10 +10,6 @@ export default function AdminPage() {
   const [title, setTitle] = useState("");
   const [platform, setPlatform] = useState("");
   const [releaseYear, setReleaseYear] = useState("");
-  const [status, setStatus] = useState(0);
-  const [rating, setRating] = useState("");
-  const [notes, setNotes] = useState("");
-
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState("");
 
@@ -21,9 +17,6 @@ export default function AdminPage() {
   const [editTitle, setEditTitle] = useState("");
   const [editPlatform, setEditPlatform] = useState("");
   const [editReleaseYear, setEditReleaseYear] = useState("");
-  const [editStatus, setEditStatus] = useState(0);
-  const [editRating, setEditRating] = useState("");
-  const [editNotes, setEditNotes] = useState("");
   const [editError, setEditError] = useState("");
   const [editSaving, setEditSaving] = useState(false);
 
@@ -60,9 +53,6 @@ export default function AdminPage() {
         title: title.trim(),
         platform: platform.trim() || null,
         releaseYear: releaseYear ? Number(releaseYear) : null,
-        status: Number(status),
-        rating: rating ? Number(rating) : null,
-        notes: notes.trim() || null,
       };
 
       await addGame(newGameDto);
@@ -70,9 +60,6 @@ export default function AdminPage() {
       setTitle("");
       setPlatform("");
       setReleaseYear("");
-      setStatus(0);
-      setRating("");
-      setNotes("");
 
       await loadGames();
     } catch (e2) {
@@ -101,9 +88,6 @@ export default function AdminPage() {
     setEditTitle(game.title ?? "");
     setEditPlatform(game.platform ?? "");
     setEditReleaseYear(game.releaseYear ?? "");
-    setEditStatus(game.status ?? 0);
-    setEditRating(game.rating ?? "");
-    setEditNotes(game.notes ?? "");
   }
 
   function cancelEdit() {
@@ -125,9 +109,6 @@ export default function AdminPage() {
         title: editTitle.trim(),
         platform: editPlatform.trim() || null,
         releaseYear: editReleaseYear ? Number(editReleaseYear) : null,
-        status: Number(editStatus),
-        rating: editRating ? Number(editRating) : null,
-        notes: editNotes.trim() || null,
       };
 
       await updateGame(id, updateDto);
@@ -168,21 +149,6 @@ export default function AdminPage() {
             <input value={releaseYear} onChange={(e) => setReleaseYear(e.target.value)} inputMode="numeric" style={{ width: "100%", padding: 8 }} />
           </label>
 
-          <label>
-            Status
-            <select value={status} onChange={(e) => setStatus(e.target.value)} style={{ width: "100%", padding: 8 }}>
-              <option value={0}>Not Played</option>
-              <option value={1}>Backlogged</option>
-              <option value={2}>Playing</option>
-              <option value={3}>Played</option>
-            </select>
-          </label>
-
-          <label>
-            Rating (optional)
-            <input value={rating} onChange={(e) => setRating(e.target.value)} inputMode="numeric" style={{ width: "100%", padding: 8 }} />
-          </label>
-
           <button type="submit" disabled={submitting} style={{ padding: 10 }}>
             {submitting ? "Adding..." : "Add Game"}
           </button>
@@ -218,26 +184,6 @@ export default function AdminPage() {
                       <label>
                         Release Year
                         <input value={editReleaseYear} onChange={(e) => setEditReleaseYear(e.target.value)} inputMode="numeric" style={{ width: "100%", padding: 8 }} />
-                      </label>
-
-                      <label>
-                        Status
-                        <select value={editStatus} onChange={(e) => setEditStatus(e.target.value)} style={{ width: "100%", padding: 8 }}>
-                          <option value={0}>Not Played</option>
-                          <option value={1}>Backlogged</option>
-                          <option value={2}>Playing</option>
-                          <option value={3}>Played</option>
-                        </select>
-                      </label>
-
-                      <label>
-                        Rating
-                        <input value={editRating} onChange={(e) => setEditRating(e.target.value)} inputMode="numeric" style={{ width: "100%", padding: 8 }} />
-                      </label>
-
-                      <label>
-                        Notes
-                        <textarea value={editNotes} onChange={(e) => setEditNotes(e.target.value)} rows={3} style={{ width: "100%", padding: 8 }} />
                       </label>
 
                       <div style={{ display: "flex", gap: 8 }}>
