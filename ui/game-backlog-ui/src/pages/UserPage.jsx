@@ -1,280 +1,385 @@
 import { useEffect, useMemo, useState } from "react";
 import { getGames } from "../api/gamesApi";
-import { getLog, addToLog, deleteLogEntry } from "../api/logApi";
+import { getLog, addToLog, updateLogEntry, deleteLogEntry } from "../api/logApi";
+import "./UserPage.css";
 
 function statusLabel(statusNum) {
-    switch (Number(statusNum)) {
-        case 0:
-            return "Not Played";
-        case 1:
-            return "Backlogged";
-        case 2:
-            return "Playing";
-        case 3:
-            return "Played";
-        default:
-            return `Status ${statusNum}`;
-    }
+  switch (Number(statusNum)) {
+    case 0:
+      return "Not Played";
+    case 1:
+      return "Backlogged";
+    case 2:
+      return "Playing";
+    case 3:
+      return "Played";
+    default:
+      return `Status ${statusNum}`;
+  }
 }
 
 export default function UserPage() {
-    // Data from API
-    const [games, setGames] = useState([]);
-    const [log, setLog] = useState ([]);
+  const [games, setGames] = useState([]);
+  const [log, setLog] = useState([]);
 
-    // Loading/error
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("")
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-    // Add-to-log form state
-    const [selectedGameId, setSelectedGameId] = useState("");
-    const [platform, setPlatform] = useState("");
-    const [status, setStatus] = useState(0);
-    const [rating, setRating] = useState("");
-    const [notes, setNotes] = useState("");
+  const [selectedGameId, setSelectedGameId] = useState("");
+  const [platform, setPlatform] = useState("");
+  const [status, setStatus] = useState(0);
+  const [rating, setRating] = useState("");
+  const [notes, setNotes] = useState("");
 
-    const [submitting, setSubmitting] = useState(false);
-    const [formError, setFormError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState("");
 
-    // Build a lookup map: gameId -> title (so we can show titles in the log list)
-    const gameTitleById = useMemo(() => {
-        const map = new Map();
-        for (const g of games) {
-            map.set(g.id, g.title ?? ` (Game ${g.id})`);
-        }
+  const [editingId, setEditingId] = useState(null);
 
-        return map;
-    }, [games]);
+  const [editPlatform, setEditPlatform] = useState("");
+  const [editStatus, setEditStatus] = useState(0);
+  const [editRating, setEditRating] = useState("");
+  const [editNotes, setEditNotes] = useState("");
 
-    // Load both catalog + log
-    async function loadAll() {
-        setError("");
-        const [gamesData, logData] = await Promise.all([getGames(), getLog()]);
-        setGames(gamesData);
-        setLog(logData);
+  const [editError, setEditError] = useState("");
+  const [editSaving, setEditSaving] = useState(false);
+
+  const gameTitleById = useMemo(() => {
+    const map = new Map();
+    for (const g of games) {
+      map.set(g.id, g.title ?? ` (Game ${g.id})`);
+    }
+    return map;
+  }, [games]);
+
+  async function loadAll() {
+    setError("");
+    const gamesData = await getGames();
+    const logData = await getLog();
+    setGames(gamesData);
+    setLog(logData);
+  }
+
+  useEffect(() => {
+    (async () => {
+      try {
+        await loadAll();
+      } catch (e) {
+        setError(e?.message ?? "Failed to load games");
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  function handleGameSelect(e) {
+    const newId = e.target.value;
+    setSelectedGameId(newId);
+
+    if (!platform.trim() && newId) {
+      const selected = games.find((g) => String(g.id) === String(newId));
+      const defaultPlatform = selected?.platform ?? "";
+      if (defaultPlatform) setPlatform(defaultPlatform);
+    }
+  }
+
+  async function handleAddToLog(e) {
+    e.preventDefault();
+    setFormError("");
+
+    if (!selectedGameId) {
+      setFormError("Choose a game first.");
+      return;
     }
 
-    useEffect(() => {
-        (async () => {
-            try {
-                await loadAll();
-            } catch (e) {
-                setError(e?.message ?? "Failed to load games")
-            } finally {
-                setLoading(false);
-            }
-        })();
-    }, []);
+    setSubmitting(true);
+    try {
+      const logDto = {
+        gameId: Number(selectedGameId),
+        platform: platform.trim() || null,
+        status: Number(status),
+        rating: rating ? Number(rating) : null,
+        notes: notes.trim() || null,
+      };
 
-    function handleGameSelect(e) {
-        const newId = e.target.value; //always a string
-        setSelectedGameId(newId);
+      await addToLog(logDto);
 
-        // Auto-fill platform IF the input is currently empty
-        // (so we don't overwrite something the user already typed)
-        if (!platform.trim() && newId) {
-            const selected = games.find((g) => String(g.id) === String(newId));
-            const defaultPlatform = selected?.platform ?? "";
-            if (defaultPlatform) setPlatform(defaultPlatform);
-        }
+      setSelectedGameId("");
+      setPlatform("");
+      setStatus(0);
+      setRating("");
+      setNotes("");
+
+      await loadAll();
+    } catch (e2) {
+      setFormError(e2?.message ?? "Failed to add to log");
+    } finally {
+      setSubmitting(false);
     }
+  }
 
-    async function handleAddToLog(e) {
-        e.preventDefault();
-        setFormError("");
+  function startEdit(entry) {
+    setEditError("");
+    setEditingId(entry.id);
 
-        if (!selectedGameId) {
-            setFormError("Choose a game first.");
-            return;
-        }
+    setEditPlatform(entry.platform ?? "");
+    setEditStatus(entry.status ?? 0);
+    setEditRating(entry.rating ?? "");
+    setEditNotes(entry.notes ?? "");
+  }
 
-        setSubmitting(true);
-        try {
-            const logDto = {
-                gameId: Number(selectedGameId),
-                platform: platform.trim() || null,
-                status: Number(status),
-                rating: rating ? Number(rating) : null,
-                notes: notes.trim() || null,
-            };
+  function cancelEdit() {
+    setEditingId(null);
+    setEditError("");
+  }
 
-            await addToLog(logDto);
+  async function saveEdit(id) {
+    setEditError("");
+    setEditSaving(true);
 
-            // reset form
-            setSelectedGameId("");
-            setPlatform("");
-            setStatus(0);
-            setRating("");
-            setNotes("");
+    try {
+      const dto = {
+        platform: editPlatform.trim() || null,
+        status: Number(editStatus),
+        rating: editRating ? Number(editRating) : null,
+        notes: editNotes.trim() || null,
+      };
 
-            await loadAll();
-            } catch (e2) {
-                setFormError(e2?.message ?? "Failed to add to log");
-            } finally {
-                setSubmitting(false);
-            }
-        }
+      await updateLogEntry(id, dto);
 
-        async function handleRemove(entry) {
-            const title =  
-                entry.game?.title ??
-                gameTitleById.get(entry.gameId) ??
-                `GameId ${entry.gameId}`;
+      setEditingId(null);
+      await loadAll();
+    } catch (e2) {
+      setEditError(e2?.message ?? "Failed to update log entry");
+    } finally {
+      setEditSaving(false);
+    }
+  }
 
-            const confirmed = window.confirm(`Remove "${title}" from log?`);
-            if (!confirmed) return;
+  async function handleRemove(entry) {
+    const title = entry.game?.title ?? gameTitleById.get(entry.gameId) ?? `GameId ${entry.gameId}`;
 
-            try {
-                await deleteLogEntry(entry.id);
-                await loadAll();
-            } catch (e) {
-                alert(e?.message ?? "Failed to remove entry");
-            }
-        }
+    const confirmed = window.confirm(`Remove "${title}" from log?`);
+    if (!confirmed) return;
 
-    return (
-        <div style={{ maxWidth: 900 }}>
-            <h2>User Mode</h2>
-            <p style={{ marginTop: -8, color: "#555" }}>
-                Browse games and manage your log (coming next).
-            </p>
+    try {
+      await deleteLogEntry(entry.id);
+      await loadAll();
+    } catch (e) {
+      alert(e?.message ?? "Failed to remove entry");
+    }
+  }
 
-            {loading && <p>Loading...</p>}
-            {error && <p style={{ color: "crimson" }}>{error}</p>}
+  return (
+    <div className="user-page">
+      <h2>User Mode</h2>
+      <p className="page-subtitle">Browse games and manage your log (coming next).</p>
 
-            {!loading && !error && (
-                <div style={{ display: "grid" , gap: 16}}>
-                    {/* Add to Log */}
-                    <section style={{padding: 12, border: "1px solid #ddd" }}>
-                        <h3 style={{ marginTop: 0 }}>Add a Game to My Log</h3>
+      {loading && <p>Loading...</p>}
+      {error && <p className="text-error">{error}</p>}
 
-                        {formError && <p style={{ color: "crimson" }}>{formError}</p>}
+      {!loading && !error && (
+        <div className="page-sections">
+          <section className="section-card">
+            <h3 className="section-title">Add a Game to My Log</h3>
 
-                        <form onSubmit={handleAddToLog} style={{ display: "grid", gap: 8 }}>
+            {formError && <p className="text-error">{formError}</p>}
+
+            <form onSubmit={handleAddToLog} className="form-grid">
+              <label>
+                Game (required)
+                <select
+                  value={selectedGameId}
+                  onChange={handleGameSelect}
+                  className="field-control"
+                >
+                  <option value="">-- Choose a game --</option>
+                  {games.map((g) => (
+                    <option key={g.id} value={g.id}>
+                      {g.title}
+                      {g.releaseYear ? ` (${g.releaseYear})` : ""}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                Platform (optional)
+                <input
+                  value={platform}
+                  onChange={(e) => setPlatform(e.target.value)}
+                  className="field-control"
+                />
+              </label>
+
+              <label>
+                Status
+                <select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  className="field-control"
+                >
+                  <option value={0}>Not Played</option>
+                  <option value={1}>Backlogged</option>
+                  <option value={2}>Playing</option>
+                  <option value={3}>Played</option>
+                </select>
+              </label>
+
+              <label>
+                Rating (optional)
+                <input
+                  value={rating}
+                  onChange={(e) => setRating(e.target.value)}
+                  inputMode="numeric"
+                  className="field-control"
+                />
+              </label>
+
+              <label>
+                Notes (optional)
+                <textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  rows={3}
+                  className="field-control"
+                />
+              </label>
+
+              <button type="submit" disabled={submitting} className="btn">
+                {submitting ? "Adding..." : "Add to Log"}
+              </button>
+            </form>
+          </section>
+
+          <section className="section-card">
+            <h3 className="section-title">My Log</h3>
+
+            {log.length === 0 ? (
+              <p>No log entries yet.</p>
+            ) : (
+              <ul className="log-list">
+                {log.map((entry) => {
+                  const title =
+                    entry.game?.title ?? gameTitleById.get(entry.gameId) ?? `Game Id ${entry.gameId}`;
+
+                  return (
+                    <li key={entry.id} className="log-list-item">
+                      {editingId === entry.id ? (
+                        <div className="edit-card">
+                          <strong>Editing</strong>
+
+                          {editError && <p className="text-error">{editError}</p>}
+
+                          <div className="form-grid">
                             <label>
-                                Game (required)
-                                <select
-                                    value={selectedGameId}
-                                    onChange={handleGameSelect}
-                                    style={{ width: "100%", padding: 8 }}
-                                >
-                                    <option value="">-- Choose a game --</option>
-                                    {games.map((g) => (
-                                        <option key={g.id} value={g.id}>
-                                            {g.title}
-                                            {g.releaseYear ? ` (${g.releaseYear})` : ""}
-                                        </option>
-                                    ))}
-                                </select>
+                              Platform
+                              <input
+                                value={editPlatform}
+                                onChange={(e) => setEditPlatform(e.target.value)}
+                                className="field-control"
+                              />
                             </label>
 
                             <label>
-                                Platform (optional)
-                                <input
-                                    value={platform}
-                                    onChange={(e) => setPlatform(e.target.value)}
-                                    style={{ width: "100%", padding: 8 }}
-                                />
+                              Status
+                              <select
+                                value={editStatus}
+                                onChange={(e) => setEditStatus(e.target.value)}
+                                className="field-control"
+                              >
+                                <option value={0}>Not Played</option>
+                                <option value={1}>Backlogged</option>
+                                <option value={2}>Playing</option>
+                                <option value={3}>Played</option>
+                              </select>
                             </label>
 
                             <label>
-                                Status 
-                                <select
-                                    value={status}
-                                    onChange={(e) => setStatus(e.target.value)}
-                                    style={{ width: "100%", padding: 8 }}
-                                >
-                                    <option value={0}>Not Played</option>
-                                    <option value={1}>Backlogged</option>
-                                    <option value={2}>Playing</option>
-                                    <option value={3}>Played</option>
-                                </select>
+                              Rating
+                              <input
+                                value={editRating}
+                                onChange={(e) => setEditRating(e.target.value)}
+                                inputMode="numeric"
+                                className="field-control"
+                              />
                             </label>
 
                             <label>
-                                Rating (optional)
-                                <input
-                                    value={rating}
-                                    onChange={(e) => setRating(e.target.value)}
-                                    inputMode="numeric"
-                                    style={{ width: "100%", padding: 8 }}
-                                />
+                              Notes
+                              <textarea
+                                value={editNotes}
+                                onChange={(e) => setEditNotes(e.target.value)}
+                                rows={3}
+                                className="field-control"
+                              />
                             </label>
 
-                            <label>
-                                Notes (optional)
-                                <textarea
-                                    value={notes}
-                                    onChange={(e) => setNotes(e.target.value)}
-                                    rows={3}
-                                    style={{ width: "100%", padding: 8 }}
-                                />
-                            </label>
+                            <div className="actions-row">
+                              <button
+                                type="button"
+                                onClick={() => saveEdit(entry.id)}
+                                disabled={editSaving}
+                              >
+                                {editSaving ? "Saving..." : "Save"}
+                              </button>
+                              <button type="button" onClick={() => cancelEdit} disabled={editSaving}>
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div>
+                          <div>
+                            <strong>{title}</strong>
+                            {entry.platform ? ` - ${entry.platform}` : ""}
+                          </div>
 
-                            <button type="submit" disabled={submitting} style={{ padding: 10 }}>
-                                {submitting ? "Adding..." : "Add to Log"}
+                          <div className="meta-text">
+                            {statusLabel(entry.status)}
+                            {entry.rating != null ? ` • Rating: ${entry.rating}` : ""}
+                            {entry.notes ? ` • ${entry.notes}` : ""}
+                          </div>
+
+                          <div className="actions-row-spaced">
+                            <button
+                              type="button"
+                              onClick={() => startEdit(entry)}
+                              className="mr-8"
+                            >
+                              Edit
                             </button>
-                        </form>
-                    </section>
-
-                    {/* My Log*/}
-                    <section style={{ padding: 12, border: "1px solid #ddd"}}>
-                        <h3 style={{marginTop: 0 }}>My Log</h3>
-
-                        {log.length === 0 ? (
-                            <p>No log entries yet.</p>
-                        ) : (
-                            <ul style={{ paddingLeft: 18 }}>
-                                {log.map((entry) => {
-                                    const title =
-                                        entry.game?.title ?? 
-                                        gameTitleById.get(entry.gameId) ??
-                                        `Game Id ${entry.gameId}`;
-
-                                    return (
-                                        <li key={entry.id} style={{ marginBottom: 12}}>
-                                            <div>
-                                                <strong>{title}</strong>
-                                                {entry.platform ? ` - ${entry.platform}` : ""}
-                                            </div>
-
-                                            <div style={{ color: "#555", marginTop: 4}}>
-                                                {statusLabel(entry.status)}
-                                                {entry.rating != null ?  ` • Rating: ${entry.rating}` : ""}
-                                                {entry.notes ? ` • ${entry.notes}` : ""}
-                                            </div>
-
-                                            <div style={{ marginTop : 6 }}>
-                                                <button type="button" onClick={() => handleRemove(entry)}>
-                                                    Remove
-                                                </button>
-                                                {/*Next: Edit log entry (PUT /api/log/{id} */}
-                                            </div>
-                                        </li>
-                                    );
-                                })}
-                            </ul>
-                        )}
-                    </section>
-
-                    {/*Optional: Browse Catalog (read-only) */}
-                    <section style={{ padding: 12, border: "1px solid #ddd"}}>
-                        <h3 style={{ marginTop: 0 }}>Browse Catalog</h3>
-                        {games.length === 0 ? (
-                            <p>No games in the catalog yet.</p>
-                        ) : (
-                            <ul style={{ paddingLeft: 18 }}>
-                                {games.map((g) => (
-                                    <li key={g.id}>
-                                        <strong>{g.title}</strong>
-                                        {g.releaseYear ? ` (${g.releaseYear})` : ""}
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    </section>
-                </div>
+                            <button type="button" onClick={() => handleRemove(entry)}>
+                              Remove
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
             )}
+          </section>
+
+          <section className="section-card">
+            <h3 className="section-title">Browse Catalog</h3>
+            {games.length === 0 ? (
+              <p>No games in the catalog yet.</p>
+            ) : (
+              <ul className="log-list">
+                {games.map((g) => (
+                  <li key={g.id}>
+                    <strong>{g.title}</strong>
+                    {g.releaseYear ? ` (${g.releaseYear})` : ""}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
         </div>
-    );
+      )}
+    </div>
+  );
 }

@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { getGames, addGame, deleteGame, updateGame } from "../api/gamesApi";
+import "./AdminPage.css";
 
 export default function AdminPage() {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Add form state (start with what you already had)
   const [title, setTitle] = useState("");
   const [platform, setPlatform] = useState("");
   const [releaseYear, setReleaseYear] = useState("");
@@ -69,8 +69,8 @@ export default function AdminPage() {
     }
   }
 
-  async function handleDelete(id, title) {
-    const confirmed = window.confirm(`Are you sure you want to delete "${title}"?`);
+  async function handleDelete(id, titleValue) {
+    const confirmed = window.confirm(`Are you sure you want to delete "${titleValue}"?`);
     if (!confirmed) return;
 
     try {
@@ -123,71 +123,100 @@ export default function AdminPage() {
   }
 
   return (
-    <div style={{ maxWidth: 900 }}>
+    <div className="admin-page">
       <h2>Admin Mode</h2>
-      <p style={{ marginTop: -8, color: "#555" }}>
-        Manage the game catalog (add/edit/delete).
-      </p>
+      <p className="page-subtitle">Manage the game catalog (add/edit/delete).</p>
 
-      <form onSubmit={handleSubmit} style={{ marginBottom: 16, padding: 12, border: "1px solid #ddd" }}>
-        <h3 style={{ marginTop: 0 }}>Add a Game</h3>
-        {formError && <p style={{ color: "crimson" }}>{formError}</p>}
+      <form onSubmit={handleSubmit} className="form-card">
+        <h3 className="form-title">Add a Game</h3>
+        {formError && <p className="text-error">{formError}</p>}
 
-        <div style={{ display: "grid", gap: 8 }}>
+        <div className="form-grid">
           <label>
             Title (required)
-            <input value={title} onChange={(e) => setTitle(e.target.value)} style={{ width: "100%", padding: 8 }} />
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="field-control"
+            />
           </label>
 
           <label>
             Platform
-            <input value={platform} onChange={(e) => setPlatform(e.target.value)} style={{ width: "100%", padding: 8 }} />
+            <input
+              value={platform}
+              onChange={(e) => setPlatform(e.target.value)}
+              className="field-control"
+            />
           </label>
 
           <label>
             Release Year
-            <input value={releaseYear} onChange={(e) => setReleaseYear(e.target.value)} inputMode="numeric" style={{ width: "100%", padding: 8 }} />
+            <input
+              value={releaseYear}
+              onChange={(e) => setReleaseYear(e.target.value)}
+              inputMode="numeric"
+              className="field-control"
+            />
           </label>
 
-          <button type="submit" disabled={submitting} style={{ padding: 10 }}>
+          <button type="submit" disabled={submitting} className="btn">
             {submitting ? "Adding..." : "Add Game"}
           </button>
         </div>
       </form>
 
-      {loading && <p>Loading…</p>}
-      {error && <p style={{ color: "crimson" }}>{error}</p>}
+      {loading && <p>Loading...</p>}
+      {error && <p className="text-error">{error}</p>}
 
-      {!loading && !error && (
-        games.length === 0 ? (
+      {!loading &&
+        !error &&
+        (games.length === 0 ? (
           <p>No games yet.</p>
         ) : (
           <ul>
             {games.map((g) => (
-              <li key={g.id} style={{ marginBottom: 10 }}>
+              <li key={g.id} className="game-list-item">
                 {editingId === g.id ? (
-                  <div style={{ border: "1px solid #ddd", padding: 10 }}>
+                  <div className="edit-card">
                     <strong>Editing</strong>
-                    {editError && <p style={{ color: "crimson" }}>{editError}</p>}
+                    {editError && <p className="text-error">{editError}</p>}
 
-                    <div style={{ display: "grid", gap: 8, marginTop: 8 }}>
+                    <div className="form-grid">
                       <label>
                         Title
-                        <input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} style={{ width: "100%", padding: 8 }} />
+                        <input
+                          value={editTitle}
+                          onChange={(e) => setEditTitle(e.target.value)}
+                          className="field-control"
+                        />
                       </label>
 
                       <label>
                         Platform
-                        <input value={editPlatform} onChange={(e) => setEditPlatform(e.target.value)} style={{ width: "100%", padding: 8 }} />
+                        <input
+                          value={editPlatform}
+                          onChange={(e) => setEditPlatform(e.target.value)}
+                          className="field-control"
+                        />
                       </label>
 
                       <label>
                         Release Year
-                        <input value={editReleaseYear} onChange={(e) => setEditReleaseYear(e.target.value)} inputMode="numeric" style={{ width: "100%", padding: 8 }} />
+                        <input
+                          value={editReleaseYear}
+                          onChange={(e) => setEditReleaseYear(e.target.value)}
+                          inputMode="numeric"
+                          className="field-control"
+                        />
                       </label>
 
-                      <div style={{ display: "flex", gap: 8 }}>
-                        <button type="button" onClick={() => saveEdit(g.id)} disabled={editSaving}>
+                      <div className="actions-row">
+                        <button
+                          type="button"
+                          onClick={() => saveEdit(g.id)}
+                          disabled={editSaving}
+                        >
                           {editSaving ? "Saving..." : "Save"}
                         </button>
                         <button type="button" onClick={cancelEdit} disabled={editSaving}>
@@ -199,9 +228,13 @@ export default function AdminPage() {
                 ) : (
                   <div>
                     <strong>{g.title ?? "(No title)"}</strong>
-                    {g.platform ? ` — ${g.platform}` : ""}
-                    <div style={{ marginTop: 6 }}>
-                      <button type="button" onClick={() => startEdit(g)} style={{ marginRight: 8 }}>
+                    {g.platform ? ` - ${g.platform}` : ""}
+                    <div className="actions-row-spaced">
+                      <button
+                        type="button"
+                        onClick={() => startEdit(g)}
+                        className="mr-8"
+                      >
                         Edit
                       </button>
                       <button type="button" onClick={() => handleDelete(g.id, g.title)}>
@@ -213,8 +246,7 @@ export default function AdminPage() {
               </li>
             ))}
           </ul>
-        )
-      )}
+        ))}
     </div>
   );
 }

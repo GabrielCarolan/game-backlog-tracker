@@ -14,7 +14,7 @@ public class EfCoreGameStore : IGameStore
     }
 
     // Q:What is .AsNoTracking() doing? A:I am only reading data. Don't track changes
-    public IEnumerable<Game> GetAll() => _db.Games.AsNoTracking().OrderBy(g => g.Id).ToList();
+    public IEnumerable<Game> GetAll() => _db.Games.AsNoTracking().OrderBy(g => g.Id).ToList(); //the toList turns database queries into actual objects
 
     public Game? GetById(int id) => _db.Games.AsNoTracking().FirstOrDefault(g => g.Id == id);
 

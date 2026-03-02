@@ -2,6 +2,9 @@ using GameBacklog.api.Models;
 using GameBacklog.api.Services; // Access to IGameStore and EfCoreGameStore so we can register them for DI
 using GameBacklog.api.Data; // Access to GameBacklogDbContext (EF Core DbContext)
 using Microsoft.EntityFrameworkCore; // EF Core APIs like UseSqlite, DbContext options
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 // WebApplicationBuilder: sets up configuration, logging, DI container, and hosting defaults
 var builder = WebApplication.CreateBuilder(args);
@@ -38,6 +41,32 @@ builder.Services.AddCors(options => // Registers CORS policy so your frontend (r
         .AllowAnyMethod()); // allow GET/POST/PUT/DELETE etc.
 });
 
+var jwtKey = builder.Configuration["Jwt:Key"]!;
+var jwtIssuer = builder.Configuration["Jwt:Issuer"]!;
+var jwtAudience = builder.Configuration["Jwt:Audience"]!;
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters // What needs to be true for token to be validated
+        {
+            ValidateIssuer = true,
+            ValidIssuer = jwtIssuer,
+
+            ValidateAudience = true,
+            ValidAudience = jwtAudience,
+
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)), // Needs to be converted to bytes for SymmetricSecruityKey for IssuerSigningKey to read it
+
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.FromMinutes(2)
+        };
+    });
+
+builder.Services.AddAuthorization();
+
 // Build the app: after this, the DI container is “locked” and middleware pipeline can be configured
 var app = builder.Build();
 
@@ -54,6 +83,7 @@ app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
 // Adds authorization middleware.
 // This only matters if you have authentication/authorization configured.
+app.UseAuthentication();
 app.UseAuthorization();
 // Maps attribute-routed controllers (your GamesController routes become active)
 app.MapControllers();
