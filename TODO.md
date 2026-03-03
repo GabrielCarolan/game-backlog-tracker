@@ -20,9 +20,30 @@
 - [ ] Add architecture notes (controllers/stores/EF models + auth flow).
 - [ ] Remove stale comments like "coming next" where features are already implemented.
 
+## External Game API Integration (Major Feature)
+- [ ] Choose provider (RAWG, IGDB, Giant Bomb, etc.) based on dataset size, pricing, and rate limits.
+- [ ] Add provider credentials to environment variables / user secrets (never commit API keys).
+- [ ] Create backend service abstraction for external catalog (`IExternalGameCatalogService`) so provider can be swapped later.
+- [ ] Implement first provider client with `HttpClient` + typed response mapping.
+- [ ] Add backend endpoint(s) for external search (example: `/api/external-games/search?query=`).
+- [ ] Normalize external fields into internal DTO shape (`title`, `releaseYear`, `platforms`, `coverUrl`, external ID).
+- [ ] Add pagination support for external search results.
+- [ ] Add caching/rate-limit protection in backend to avoid provider quota issues.
+- [ ] Add error handling for provider outages/timeouts and return clean API errors to UI.
+- [ ] Add Admin UI flow: search external catalog -> preview -> import into local `Games` table.
+- [ ] Prevent duplicates when importing (match on title + platform + release year or external ID).
+- [ ] Add tests for provider mapping, endpoint behavior, and duplicate handling.
+- [ ] Document setup and provider-specific configuration in `README.md`.
+
 ## Suggested Order
 - [ ] 1. Auth foundation (register/login + JWT claims + `[Authorize]`)
 - [ ] 2. Role authorization for admin routes
 - [ ] 3. Validation hardening and bug fixes
 - [ ] 4. Tests (API first, then UI)
 - [ ] 5. Documentation refresh
+
+## Auth Questions (For Next Session)
+- [ ] Why this? and what is it doing?: `builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();`
+- [ ] Full `IPasswordHasher` explanation is needed.
+- [ ] What is the `IConfiguration config` for?
+- [ ] JWT explanation needed: `GenerateJwt(user)` and all related JWT concepts.

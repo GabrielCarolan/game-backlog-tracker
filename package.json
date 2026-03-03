@@ -1,0 +1,9 @@
+{
+  "name": "game-backlog-tracker",
+  "private": true,
+  "scripts": {
+    "dev:api": "dotnet run --project api/GameBacklog.api",
+    "dev:ui": "npm --prefix ui/game-backlog-ui run dev",
+    "dev:all": "sh -c 'dotnet run --project api/GameBacklog.api & API_PID=$!; npm --prefix ui/game-backlog-ui run dev & UI_PID=$!; trap \"kill $API_PID $UI_PID\" INT TERM EXIT; wait'"
+  }
+}

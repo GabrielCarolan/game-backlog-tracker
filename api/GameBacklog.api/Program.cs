@@ -1,8 +1,10 @@
 using GameBacklog.api.Models;
 using GameBacklog.api.Services; // Access to IGameStore and EfCoreGameStore so we can register them for DI
 using GameBacklog.api.Data; // Access to GameBacklogDbContext (EF Core DbContext)
+using GameBacklog.Api.Models;
 using Microsoft.EntityFrameworkCore; // EF Core APIs like UseSqlite, DbContext options
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -29,6 +31,7 @@ Console.WriteLine($"EF Core using connection string: {connectionString}");
 builder.Services.AddControllers(); // Registers MVC controllers (so [ApiController] + routing attributes work)
 builder.Services.AddScoped<IGameStore, EfCoreGameStore>(); // DI registration: whenever something asks for IGameStore, create an EfCoreGameStore and inject it (scoped = once per HTTP request)
 builder.Services.AddScoped<ILogStore, EfCoreLogStore>();
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddDbContext<GameBacklogDbContext>(options => options.UseSqlite(connectionString)); // Registers your EF Core DbContext. scoped by default (one per request). options.UseSqlite(connectionString) tells EF Core to use SQLite with your connection string.
 // Framework Infrastructure (Not DI per se)
 builder.Services.AddSwaggerGen(); // Registers Swagger generator so your API can produce OpenAPI docs
