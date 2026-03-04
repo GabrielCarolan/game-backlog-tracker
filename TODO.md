@@ -43,7 +43,4 @@
 - [ ] 5. Documentation refresh
 
 ## Auth Questions (For Next Session)
-- [ ] Why this? and what is it doing?: `builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();`
-- [ ] Full `IPasswordHasher` explanation is needed.
-- [ ] What is the `IConfiguration config` for?
 - [ ] JWT explanation needed: `GenerateJwt(user)` and all related JWT concepts.

@@ -16,8 +16,8 @@ namespace GameBacklog.api.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly GameBacklogDbContext _db;
-    private readonly IPasswordHasher<User> _passwordHasher;
-    private readonly IConfiguration _config;
+    private readonly IPasswordHasher<User> _passwordHasher; //hashes and reads hashed passwords to avoid storing users passwords in plain text
+    private readonly IConfiguration _config; //can read settings from appsettings.json, environment variables, etc.
 
     public AuthController(
         GameBacklogDbContext db,
@@ -73,7 +73,7 @@ public class AuthController : ControllerBase
         }
 
         var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
-        if (result == PasswordVerificationResult.Failed)
+        if (result == PasswordVerificationResult.Failed) //PasswordVerificationResult is a built in enum from ASP.NET Core Identity
         {
             return Unauthorized("Invalid email or password.");
         }
