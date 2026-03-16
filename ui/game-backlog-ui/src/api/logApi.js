@@ -1,3 +1,5 @@
+import { getAuthToken } from "./authStorage";
+
 const API_BASE = "http://localhost:5045";
 
 async function parseError(res) {
@@ -21,7 +23,17 @@ async function parseError(res) {
 }
 
 async function requestJson(path, options) {
-  const res = await fetch(`${API_BASE}${path}`, options);
+  const token = getAuthToken();
+  const headers = new Headers(options?.headers ?? {});
+
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
+  const res = await fetch(`${API_BASE}${path}`, {
+    ...options,
+    headers,
+  });
 
   if (!res.ok) {
     const message = await parseError(res);

@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { getGames } from "../api/gamesApi";
 import { getLog, addToLog, updateLogEntry, deleteLogEntry } from "../api/logApi";
+import { login, register } from "../api/authApi";
+import { clearAuthToken, getAuthToken, setAuthToken } from "../api/authStorage";
 import "./UserPage.css";
 
 function statusLabel(statusNum) {
@@ -21,9 +23,15 @@ function statusLabel(statusNum) {
 export default function UserPage() {
   const [games, setGames] = useState([]);
   const [log, setLog] = useState([]);
+  const [token, setToken] = useState(() => getAuthToken());
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [authMode, setAuthMode] = useState("login");
+  const [authEmail, setAuthEmail] = useState("");
+  const [authPassword, setAuthPassword] = useState("");
+  const [authError, setAuthError] = useState("");
+  const [authSubmitting, setAuthSubmitting] = useState(false);
 
   const [selectedGameId, setSelectedGameId] = useState("");
   const [platform, setPlatform] = useState("");
@@ -55,13 +63,20 @@ export default function UserPage() {
   async function loadAll() {
     setError("");
     const gamesData = await getGames();
-    const logData = await getLog();
     setGames(gamesData);
+
+    if (!token) {
+      setLog([]);
+      return;
+    }
+
+    const logData = await getLog();
     setLog(logData);
   }
 
   useEffect(() => {
     (async () => {
+      setLoading(true);
       try {
         await loadAll();
       } catch (e) {
@@ -70,7 +85,42 @@ export default function UserPage() {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [token]);
+
+  async function handleAuthSubmit(e) {
+    e.preventDefault();
+    setAuthError("");
+    setAuthSubmitting(true);
+
+    try {
+      const authRequest = {
+        email: authEmail.trim(),
+        password: authPassword,
+      };
+
+      const authResponse =
+        authMode === "register"
+          ? await register(authRequest)
+          : await login(authRequest);
+
+      setAuthToken(authResponse.token);
+      setToken(authResponse.token);
+      setAuthPassword("");
+      setError("");
+    } catch (e2) {
+      setAuthError(e2?.message ?? "Authentication failed");
+    } finally {
+      setAuthSubmitting(false);
+    }
+  }
+
+  function handleLogout() {
+    clearAuthToken();
+    setToken("");
+    setLog([]);
+    setAuthPassword("");
+    setAuthError("");
+  }
 
   function handleGameSelect(e) {
     const newId = e.target.value;
@@ -112,6 +162,10 @@ export default function UserPage() {
 
       await loadAll();
     } catch (e2) {
+      if (e2?.message?.includes("401")) {
+        clearAuthToken();
+        setToken("");
+      }
       setFormError(e2?.message ?? "Failed to add to log");
     } finally {
       setSubmitting(false);
@@ -150,6 +204,10 @@ export default function UserPage() {
       setEditingId(null);
       await loadAll();
     } catch (e2) {
+      if (e2?.message?.includes("401")) {
+        clearAuthToken();
+        setToken("");
+      }
       setEditError(e2?.message ?? "Failed to update log entry");
     } finally {
       setEditSaving(false);
@@ -166,6 +224,10 @@ export default function UserPage() {
       await deleteLogEntry(entry.id);
       await loadAll();
     } catch (e) {
+      if (e?.message?.includes("401")) {
+        clearAuthToken();
+        setToken("");
+      }
       alert(e?.message ?? "Failed to remove entry");
     }
   }
@@ -173,13 +235,92 @@ export default function UserPage() {
   return (
     <div className="user-page">
       <h2>User Mode</h2>
-      <p className="page-subtitle">Browse games and manage your log (coming next).</p>
+      <p className="page-subtitle">Browse games and manage your personal log.</p>
+
+      <section className="section-card auth-card">
+        <div className="auth-header-row">
+          <div>
+            <h3 className="section-title">Account</h3>
+            <p className="meta-text">
+              {token ? "You are signed in for log access." : "Sign in to use your log."}
+            </p>
+          </div>
+
+          {token && (
+            <button type="button" onClick={handleLogout} className="btn">
+              Log Out
+            </button>
+          )}
+        </div>
+
+        {!token && (
+          <>
+            <div className="auth-toggle-row">
+              <button
+                type="button"
+                onClick={() => setAuthMode("login")}
+                className={authMode === "login" ? "btn auth-toggle-active" : "btn"}
+              >
+                Login
+              </button>
+              <button
+                type="button"
+                onClick={() => setAuthMode("register")}
+                className={authMode === "register" ? "btn auth-toggle-active" : "btn"}
+              >
+                Register
+              </button>
+            </div>
+
+            {authError && <p className="text-error">{authError}</p>}
+
+            <form onSubmit={handleAuthSubmit} className="form-grid">
+              <label>
+                Email
+                <input
+                  type="email"
+                  value={authEmail}
+                  onChange={(e) => setAuthEmail(e.target.value)}
+                  className="field-control"
+                />
+              </label>
+
+              <label>
+                Password
+                <input
+                  type="password"
+                  value={authPassword}
+                  onChange={(e) => setAuthPassword(e.target.value)}
+                  className="field-control"
+                />
+              </label>
+
+              <button type="submit" disabled={authSubmitting} className="btn">
+                {authSubmitting
+                  ? authMode === "register"
+                    ? "Registering..."
+                    : "Logging in..."
+                  : authMode === "register"
+                    ? "Create Account"
+                    : "Login"}
+              </button>
+            </form>
+          </>
+        )}
+      </section>
 
       {loading && <p>Loading...</p>}
       {error && <p className="text-error">{error}</p>}
 
       {!loading && !error && (
         <div className="page-sections">
+          {!token ? (
+            <section className="section-card">
+              <h3 className="section-title">My Log</h3>
+              <p className="meta-text">Log features unlock after login.</p>
+            </section>
+          ) : (
+            <>
           <section className="section-card">
             <h3 className="section-title">Add a Game to My Log</h3>
 
@@ -362,6 +503,8 @@ export default function UserPage() {
               </ul>
             )}
           </section>
+            </>
+          )}
 
           <section className="section-card">
             <h3 className="section-title">Browse Catalog</h3>

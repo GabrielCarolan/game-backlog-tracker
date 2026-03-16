@@ -12,6 +12,10 @@
   gap: 16px;
 }
 
+.auth-card {
+  margin-bottom: 16px;
+}
+
 .section-card {
   padding: 12px;
   border: 1px solid #ddd;
@@ -60,6 +64,23 @@
 .actions-row {
   display: flex;
   gap: 8px;
+}
+
+.auth-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.auth-toggle-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.auth-toggle-active {
+  font-weight: 700;
 }
 
 .actions-row-spaced {

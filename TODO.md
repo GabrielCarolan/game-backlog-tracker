@@ -20,6 +20,14 @@
 - [ ] Add architecture notes (controllers/stores/EF models + auth flow).
 - [ ] Remove stale comments like "coming next" where features are already implemented.
 
+## Explain Later
+- [ ] [api/GameBacklog.api/Controllers/LogController.cs](/Users/gabecarolan/Documents/GamingLetterboxdProject/game-backlog-tracker/api/GameBacklog.api/Controllers/LogController.cs) - `[Authorize]`, JWT claim lookup, and why fallback user logic was removed.
+- [ ] [ui/game-backlog-ui/src/api/logApi.js](/Users/gabecarolan/Documents/GamingLetterboxdProject/game-backlog-tracker/ui/game-backlog-ui/src/api/logApi.js) - attaching the bearer token to protected log requests.
+- [ ] [ui/game-backlog-ui/src/api/authStorage.js](/Users/gabecarolan/Documents/GamingLetterboxdProject/game-backlog-tracker/ui/game-backlog-ui/src/api/authStorage.js) - how token persistence with `localStorage` works.
+- [ ] [ui/game-backlog-ui/src/api/authApi.js](/Users/gabecarolan/Documents/GamingLetterboxdProject/game-backlog-tracker/ui/game-backlog-ui/src/api/authApi.js) - register/login request flow and API error handling.
+- [ ] [ui/game-backlog-ui/src/pages/UserPage.jsx](/Users/gabecarolan/Documents/GamingLetterboxdProject/game-backlog-tracker/ui/game-backlog-ui/src/pages/UserPage.jsx) - auth state, conditional loading, and logout behavior.
+- [ ] [ui/game-backlog-ui/src/pages/UserPage.css](/Users/gabecarolan/Documents/GamingLetterboxdProject/game-backlog-tracker/ui/game-backlog-ui/src/pages/UserPage.css) - small styling additions for the auth UI.
+
 ## External Game API Integration (Major Feature)
 - [ ] Choose provider (RAWG, IGDB, Giant Bomb, etc.) based on dataset size, pricing, and rate limits.
 - [ ] Add provider credentials to environment variables / user secrets (never commit API keys).
@@ -41,6 +49,3 @@
 - [ ] 3. Validation hardening and bug fixes
 - [ ] 4. Tests (API first, then UI)
 - [ ] 5. Documentation refresh
-
-## Auth Questions (For Next Session)
-- [ ] JWT explanation needed: `GenerateJwt(user)` and all related JWT concepts.
