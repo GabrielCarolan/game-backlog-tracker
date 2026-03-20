@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { getGames } from "../api/gamesApi";
 import { getLog, addToLog, updateLogEntry, deleteLogEntry } from "../api/logApi";
 import { login, register } from "../api/authApi";
-import { clearAuthToken, getAuthToken, setAuthToken } from "../api/authStorage";
+import { clearAuthSession, getAuthToken, setAuthSession } from "../api/authStorage";
 import "./UserPage.css";
 
 function statusLabel(statusNum) {
@@ -103,7 +103,10 @@ export default function UserPage() {
           ? await register(authRequest)
           : await login(authRequest);
 
-      setAuthToken(authResponse.token);
+      setAuthSession({
+        token: authResponse.token,
+        role: authResponse.role,
+      });
       setToken(authResponse.token);
       setAuthPassword("");
       setError("");
@@ -115,7 +118,7 @@ export default function UserPage() {
   }
 
   function handleLogout() {
-    clearAuthToken();
+    clearAuthSession();
     setToken("");
     setLog([]);
     setAuthPassword("");
@@ -163,7 +166,7 @@ export default function UserPage() {
       await loadAll();
     } catch (e2) {
       if (e2?.message?.includes("401")) {
-        clearAuthToken();
+        clearAuthSession();
         setToken("");
       }
       setFormError(e2?.message ?? "Failed to add to log");
@@ -205,7 +208,7 @@ export default function UserPage() {
       await loadAll();
     } catch (e2) {
       if (e2?.message?.includes("401")) {
-        clearAuthToken();
+        clearAuthSession();
         setToken("");
       }
       setEditError(e2?.message ?? "Failed to update log entry");
@@ -225,7 +228,7 @@ export default function UserPage() {
       await loadAll();
     } catch (e) {
       if (e?.message?.includes("401")) {
-        clearAuthToken();
+        clearAuthSession();
         setToken("");
       }
       alert(e?.message ?? "Failed to remove entry");

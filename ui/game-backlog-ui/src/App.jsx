@@ -1,6 +1,8 @@
+import { useEffect, useState } from "react";
 import { NavLink, Routes, Route, Navigate } from "react-router-dom";
 import AdminPage from "./pages/AdminPage";
 import UserPage from "./pages/UserPage";
+import { getAuthRole, subscribeToAuthChanges } from "./api/authStorage";
 import "./App.css";
 
 function navLinkClassName({ isActive }) {
@@ -8,6 +10,16 @@ function navLinkClassName({ isActive }) {
 }
 
 export default function App() {
+  const [role, setRole] = useState(() => getAuthRole());
+
+  useEffect(() => {
+    return subscribeToAuthChanges(() => {
+      setRole(getAuthRole());
+    });
+  }, []);
+
+  const isAdmin = role === "Admin";
+
   return (
     <div className="app-shell">
       <header className="app-header">
@@ -15,15 +27,20 @@ export default function App() {
         <NavLink to="/user" className={navLinkClassName}>
           User
         </NavLink>
-        <NavLink to="/admin" className={navLinkClassName}>
-          Admin
-        </NavLink>
+        {isAdmin && (
+          <NavLink to="/admin" className={navLinkClassName}>
+            Admin
+          </NavLink>
+        )}
       </header>
 
       <Routes>
         <Route path="/" element={<Navigate to="/user" replace />} />
         <Route path="/user" element={<UserPage />} />
-        <Route path="/admin" element={<AdminPage />} />
+        <Route
+          path="/admin"
+          element={isAdmin ? <AdminPage /> : <Navigate to="/user" replace />}
+        />
         <Route path="*" element={<p>Not Found</p>} />
       </Routes>
     </div>

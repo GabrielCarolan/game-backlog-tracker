@@ -32,7 +32,7 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<ActionResult<AuthResponse>> Register([FromBody] RegisterRequest request)
     {
-        var normalizedEmail = request.Email.Trim().ToLowerInvariant();
+        var normalizedEmail = request.Email.Trim().ToLowerInvariant(); //consistency in email storage and comparison
 
         var exists = await _db.Users.AnyAsync(u => u.Email.ToLower() == normalizedEmail);
         if (exists)
@@ -101,7 +101,8 @@ public class AuthController : ControllerBase
             new(JwtRegisteredClaimNames.Email, user.Email),
             new(ClaimTypes.Role, user.Role)
         };
-
+        
+        // Convert our secret key into a crypto key and use it to sign the JWT with HMAC-SHA256.
         var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
         var creds = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
 

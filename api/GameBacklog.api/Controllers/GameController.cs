@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using GameBacklog.api.Models;
 using GameBacklog.api.Dtos;
 using System.Dynamic;
@@ -39,6 +40,7 @@ public class GamesController : ControllerBase
 
     // POST /api/games
     [HttpPost]
+    [Authorize(Roles = "Admin")] // Require user to be in Admin role to create a game
     public ActionResult<Game> Create([FromBody] CreateGameRequest request)
     {
         var game = new Game
@@ -55,6 +57,7 @@ public class GamesController : ControllerBase
 
     // PUT /api/games/2
     [HttpPut("{id:int}")]
+    [Authorize(Roles = "Admin")] // Require user to be in Admin role to update a game
     public IActionResult Update(int id, [FromBody] UpdateGameRequest request)
     {
         var updated = new Game
@@ -70,6 +73,7 @@ public class GamesController : ControllerBase
 
     // DELETE /api/games/2
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Admin")] // Require user to be in Admin role to delete a game
     public IActionResult Delete(int id)
     {
         if (!_store.Delete(id)) return NotFound();
