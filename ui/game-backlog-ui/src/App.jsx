@@ -13,10 +13,10 @@ export default function App() {
   const [role, setRole] = useState(() => getAuthRole());
 
   useEffect(() => {
-    return subscribeToAuthChanges(() => {
+    return subscribeToAuthChanges(() => { // Function to change the role
       setRole(getAuthRole());
     });
-  }, []);
+  }, []); // Call once on mount to subscribe to auth changes  
 
   const isAdmin = role === "Admin";
 

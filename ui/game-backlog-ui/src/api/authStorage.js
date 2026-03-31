@@ -30,9 +30,10 @@ export function clearAuthSession() {
   notifyAuthChanged();
 }
 
+// callback is a function that will be called whenever the auth token or role changes.
 export function subscribeToAuthChanges(callback) {
-  window.addEventListener(AUTH_CHANGED_EVENT, callback);
-  window.addEventListener("storage", callback);
+  window.addEventListener(AUTH_CHANGED_EVENT, callback); // Takes in (eventName, function to call when event happens)
+  window.addEventListener("storage", callback); // "storage" event is a built-in event that fires when localStorage changes in another tab/window
 
   return () => {
     window.removeEventListener(AUTH_CHANGED_EVENT, callback);

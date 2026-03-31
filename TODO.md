@@ -1,11 +1,11 @@
 # Game Backlog Tracker TODO
 
 ## High Priority
-- [ ] Replace hardcoded `CurrentUserId = 1` with real authenticated user identity from JWT claims.
-- [ ] Add auth endpoints (`register`, `login`) and issue JWTs from the API.
-- [ ] Protect user log endpoints with `[Authorize]`.
-- [ ] Protect admin/catalog management with role-based authorization (`Admin`).
-- [ ] Move JWT key out of `appsettings*.json` into environment variables / user secrets.
+- [x] Replace hardcoded `CurrentUserId = 1` with real authenticated user identity from JWT claims.
+- [x] Add auth endpoints (`register`, `login`) and issue JWTs from the API.
+- [x] Protect user log endpoints with `[Authorize]`.
+- [x] Protect admin/catalog management with role-based authorization (`Admin`).
+- [x] Move JWT key out of `appsettings*.json` into environment variables / user secrets.
 
 ## Medium Priority
 - [ ] Fix User log edit Cancel button bug (`onClick={() => cancelEdit}` -> call `cancelEdit`).
@@ -36,15 +36,19 @@
 - [ ] Document setup and provider-specific configuration in `README.md`.
 
 ## Suggested Order
-- [ ] 1. Auth foundation (register/login + JWT claims + `[Authorize]`)
-- [ ] 2. Role authorization for admin routes
+- [x] 1. Auth foundation (register/login + JWT claims + `[Authorize]`)
+- [x] 2. Role authorization for admin routes
 - [ ] 3. Validation hardening and bug fixes
 - [ ] 4. Tests (API first, then UI)
 - [ ] 5. Documentation refresh
 
+## Notes
+- `UserPage.jsx` still has the Cancel button bug in the log edit form: `onClick={() => cancelEdit}` should call `cancelEdit`.
+- Frontend admin navigation/route gating is implemented, even though the TODO item is phrased as backend role authorization.
+
 ## Files Changed To Review
-- [ ] `api/GameBacklog.api/Controllers/GameController.cs`
-- [ ] `ui/game-backlog-ui/src/api/authStorage.js`
-- [ ] `ui/game-backlog-ui/src/App.jsx`
-- [ ] `ui/game-backlog-ui/src/pages/UserPage.jsx`
+- [ ] `api/GameBacklog.api/GameBacklog.api.csproj`
+- [ ] `api/GameBacklog.api/Program.cs`
+- [ ] `api/GameBacklog.api/appsettings.json`
+- [ ] `api/GameBacklog.api/appsettings.Development.json`
 - [ ] `TODO.md`

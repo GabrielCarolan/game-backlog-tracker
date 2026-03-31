@@ -4,6 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>GameBacklog.Api-19f4a7c9-0c52-4ff2-8a80-c8da1ef2fb41</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
