@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:5045";
+import { API_BASE_URL } from "./apiBaseUrl";
 
 async function parseError(res) {
   const contentType = res.headers.get("content-type") ?? "";
@@ -21,7 +21,7 @@ async function parseError(res) {
 }
 
 async function requestJson(path, options) {
-  const res = await fetch(`${API_BASE}${path}`, options);
+  const res = await fetch(`${API_BASE_URL}${path}`, options);
 
   if (!res.ok) {
     const message = await parseError(res);

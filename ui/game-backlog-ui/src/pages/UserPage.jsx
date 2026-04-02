@@ -467,7 +467,7 @@ export default function UserPage() {
                               >
                                 {editSaving ? "Saving..." : "Save"}
                               </button>
-                              <button type="button" onClick={() => cancelEdit} disabled={editSaving}>
+                              <button type="button" onClick={cancelEdit} disabled={editSaving}>
                                 Cancel
                               </button>
                             </div>

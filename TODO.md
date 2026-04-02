@@ -8,9 +8,9 @@
 - [x] Move JWT key out of `appsettings*.json` into environment variables / user secrets.
 
 ## Medium Priority
-- [ ] Fix User log edit Cancel button bug (`onClick={() => cancelEdit}` -> call `cancelEdit`).
-- [ ] Add consistent validation rules for log create/update DTOs (especially rating range).
-- [ ] Centralize API base URL into Vite env config (e.g. `VITE_API_BASE_URL`) instead of hardcoded strings.
+- [x] Fix User log edit Cancel button bug (`onClick={() => cancelEdit}` -> call `cancelEdit`).
+- [x] Add consistent validation rules for log create/update DTOs (especially rating range).
+- [x] Centralize API base URL into Vite env config (e.g. `VITE_API_BASE_URL`) instead of hardcoded strings.
 - [ ] Add backend integration tests for games CRUD, log CRUD, and auth-protected behavior.
 - [ ] Add basic frontend tests for Admin and User flows.
 
@@ -38,17 +38,14 @@
 ## Suggested Order
 - [x] 1. Auth foundation (register/login + JWT claims + `[Authorize]`)
 - [x] 2. Role authorization for admin routes
-- [ ] 3. Validation hardening and bug fixes
+- [x] 3. Validation hardening and bug fixes
 - [ ] 4. Tests (API first, then UI)
 - [ ] 5. Documentation refresh
 
 ## Notes
-- `UserPage.jsx` still has the Cancel button bug in the log edit form: `onClick={() => cancelEdit}` should call `cancelEdit`.
 - Frontend admin navigation/route gating is implemented, even though the TODO item is phrased as backend role authorization.
 
-## Files Changed To Review
-- [ ] `api/GameBacklog.api/GameBacklog.api.csproj`
-- [ ] `api/GameBacklog.api/Program.cs`
-- [ ] `api/GameBacklog.api/appsettings.json`
-- [ ] `api/GameBacklog.api/appsettings.Development.json`
-- [ ] `TODO.md`
+## Medium Priority Progress Notes
+- `ui/game-backlog-ui/src/api/authApi.js`: switched auth requests to use the shared API base URL helper instead of a hardcoded URL.
+- `ui/game-backlog-ui/src/api/gamesApi.js`: switched game catalog requests to use the shared API base URL helper instead of a hardcoded URL.
+- `ui/game-backlog-ui/src/api/logApi.js`: switched log requests to use the shared API base URL helper instead of a hardcoded URL.

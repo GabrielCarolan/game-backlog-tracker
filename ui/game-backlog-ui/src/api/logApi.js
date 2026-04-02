@@ -1,6 +1,5 @@
 import { getAuthToken } from "./authStorage";
-
-const API_BASE = "http://localhost:5045";
+import { API_BASE_URL } from "./apiBaseUrl";
 
 async function parseError(res) {
   const contentType = res.headers.get("content-type") ?? "";
@@ -30,7 +29,7 @@ async function requestJson(path, options) {
     headers.set("Authorization", `Bearer ${token}`);
   }
 
-  const res = await fetch(`${API_BASE}${path}`, {
+  const res = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
     headers,
   });

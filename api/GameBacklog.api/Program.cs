@@ -44,7 +44,7 @@ builder.Services.AddCors(options => // Registers CORS policy so your frontend (r
         .AllowAnyMethod()); // allow GET/POST/PUT/DELETE etc.
 });
 
-var jwtKey = builder.Configuration["Jwt:Key"];
+var jwtKey = builder.Configuration["Jwt:Key"]; // Read the JWT signing key from user secrets automatically since it is not in the appsettings
 var jwtIssuer = builder.Configuration["Jwt:Issuer"];
 var jwtAudience = builder.Configuration["Jwt:Audience"];
 
