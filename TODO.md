@@ -14,6 +14,24 @@
 - [ ] Add backend integration tests for games CRUD, log CRUD, and auth-protected behavior.
 - [ ] Add basic frontend tests for Admin and User flows.
 
+## Backend Integration Test Checklist
+- [x] Create `api/GameBacklog.api.Tests` test project.
+- [x] Add integration test packages (`Microsoft.AspNetCore.Mvc.Testing`, test SDK, xUnit-related packages).
+- [ ] Add API test project to the solution/repo test workflow.
+- [ ] Make `Program` accessible to the test host if needed (for `WebApplicationFactory<Program>`).
+- [ ] Create a custom test application factory for booting the API in tests.
+- [ ] Replace the production DB registration with an isolated test database configuration.
+- [ ] Add shared test data seeding helpers for users, games, and log entries.
+- [ ] Add auth test helpers for obtaining/using JWTs in endpoint tests.
+- [ ] Add integration tests for `GET /api/games`.
+- [ ] Add integration tests for admin-only game create/update/delete endpoints.
+- [ ] Add integration tests for unauthenticated access rejection on `/api/log`.
+- [ ] Add integration tests for log create/update/delete flows.
+- [ ] Add integration tests for validation failures like invalid `rating`.
+- [ ] Add integration tests to confirm users cannot modify other users' log entries.
+- [ ] Add an auth integration test pass for register/login happy paths.
+- [ ] Run the backend integration test suite and fix any setup issues.
+
 ## Low Priority / Cleanup
 - [ ] Update root `README.md` tech stack (currently says TypeScript + SQL Server, project uses React JS + SQLite).
 - [ ] Add setup docs for local dev: run API, run UI, DB migration steps, env vars.
@@ -44,8 +62,3 @@
 
 ## Notes
 - Frontend admin navigation/route gating is implemented, even though the TODO item is phrased as backend role authorization.
-
-## Medium Priority Progress Notes
-- `ui/game-backlog-ui/src/api/authApi.js`: switched auth requests to use the shared API base URL helper instead of a hardcoded URL.
-- `ui/game-backlog-ui/src/api/gamesApi.js`: switched game catalog requests to use the shared API base URL helper instead of a hardcoded URL.
-- `ui/game-backlog-ui/src/api/logApi.js`: switched log requests to use the shared API base URL helper instead of a hardcoded URL.
