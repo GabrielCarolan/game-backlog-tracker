@@ -105,4 +105,7 @@ app.MapControllers();
 // Start listening for HTTP requests (the app is now running)
 app.Run();
 
+// Partial means a class can be split across multiple declarations.
+// Bridge that makes the top-level app entry point testable
+public partial class Program { }
 
