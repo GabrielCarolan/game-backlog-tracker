@@ -19,7 +19,7 @@
 - [x] Add integration test packages (`Microsoft.AspNetCore.Mvc.Testing`, test SDK, xUnit-related packages).
 - [x] Add API test project to the solution/repo test workflow.
 - [x] Make `Program` accessible to the test host if needed (for `WebApplicationFactory<Program>`).
-- [ ] Create a custom test application factory for booting the API in tests.
+- [x] Create a custom test application factory for booting the API in tests.
 - [ ] Replace the production DB registration with an isolated test database configuration.
 - [ ] Add shared test data seeding helpers for users, games, and log entries.
 - [ ] Add auth test helpers for obtaining/using JWTs in endpoint tests.
