@@ -20,7 +20,7 @@
 - [x] Add API test project to the solution/repo test workflow.
 - [x] Make `Program` accessible to the test host if needed (for `WebApplicationFactory<Program>`).
 - [x] Create a custom test application factory for booting the API in tests.
-- [ ] Replace the production DB registration with an isolated test database configuration.
+- [x] Replace the production DB registration with an isolated test database configuration.
 - [ ] Add shared test data seeding helpers for users, games, and log entries.
 - [ ] Add auth test helpers for obtaining/using JWTs in endpoint tests.
 - [ ] Add integration tests for `GET /api/games`.
