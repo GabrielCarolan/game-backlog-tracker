@@ -23,14 +23,17 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             _connection = new SqliteConnection("DataSource=:memory:");
             _connection.Open();
 
+            // Configure the app to use the temp/test database
             services.AddSingleton(_connection); // Keep the connection open for the lifetime of the application
             services.AddDbContext<GameBacklogDbContext>(options =>
                 options.UseSqlite(_connection)); // Use the in-memory SQLite database when the application requests a GameBacklogDbContext
 
+            // Build container and resolve the DbContext
             using var serviceProvider = services.BuildServiceProvider(); // Make the container from registrations
             using var scope = serviceProvider.CreateScope(); // Create the proper lifetime scope to resolve the DbContext
             var db = scope.ServiceProvider.GetRequiredService<GameBacklogDbContext>(); // Get the actual DbContext instance that the application will use
 
+            // Initialize a fresh database
             db.Database.EnsureDeleted();
             db.Database.EnsureCreated();
         });
