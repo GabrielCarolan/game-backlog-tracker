@@ -12,6 +12,13 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
     private SqliteConnection? _connection;
 
+    public async Task ExecuteDbContextAsync(Func<GameBacklogDbContext, Task> action)
+    {
+        await using var scope = Services.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<GameBacklogDbContext>();
+        await action(db);
+    }
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureServices(services =>

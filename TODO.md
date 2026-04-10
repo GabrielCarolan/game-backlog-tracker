@@ -21,7 +21,7 @@
 - [x] Make `Program` accessible to the test host if needed (for `WebApplicationFactory<Program>`).
 - [x] Create a custom test application factory for booting the API in tests.
 - [x] Replace the production DB registration with an isolated test database configuration.
-- [ ] Add shared test data seeding helpers for users, games, and log entries.
+- [x] Add shared test data seeding helpers for users, games, and log entries.
 - [ ] Add auth test helpers for obtaining/using JWTs in endpoint tests.
 - [ ] Add integration tests for `GET /api/games`.
 - [ ] Add integration tests for admin-only game create/update/delete endpoints.
@@ -62,3 +62,7 @@
 
 ## Notes
 - Frontend admin navigation/route gating is implemented, even though the TODO item is phrased as backend role authorization.
+
+## Current Review List
+- `api/GameBacklog.api.Tests/CustomWebApplicationFactory.cs`: added `ExecuteDbContextAsync(...)` so test helpers and future tests can open a scoped `GameBacklogDbContext` without duplicating DI boilerplate.
+- `api/GameBacklog.api.Tests/TestDataSeeder.cs`: added shared seed helpers for `User`, `Game`, and `LogEntry` records so integration tests can set up data consistently.
