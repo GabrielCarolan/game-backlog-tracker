@@ -14,11 +14,12 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
     public async Task ExecuteDbContextAsync(Func<GameBacklogDbContext, Task> action)
     {
-        await using var scope = Services.CreateAsyncScope();
+        await using var scope = Services.CreateAsyncScope(); 
         var db = scope.ServiceProvider.GetRequiredService<GameBacklogDbContext>();
         await action(db);
     }
 
+    // Override the WebApplicationFactory<Program> method to configure the test services
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureServices(services =>

@@ -64,5 +64,4 @@
 - Frontend admin navigation/route gating is implemented, even though the TODO item is phrased as backend role authorization.
 
 ## Current Review List
-- `api/GameBacklog.api.Tests/CustomWebApplicationFactory.cs`: added `ExecuteDbContextAsync(...)` so test helpers and future tests can open a scoped `GameBacklogDbContext` without duplicating DI boilerplate.
 - `api/GameBacklog.api.Tests/TestDataSeeder.cs`: added shared seed helpers for `User`, `Game`, and `LogEntry` records so integration tests can set up data consistently.

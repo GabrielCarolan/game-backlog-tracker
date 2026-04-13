@@ -8,6 +8,7 @@ namespace GameBacklog.api.Tests;
 public static class TestDataSeeder
 {
     public static async Task<User> SeedUserAsync(
+        // Defualt values for convenience, but can be overridden when calling the method
         CustomWebApplicationFactory factory,
         string email = "user@example.com",
         string password = "Password123!",
