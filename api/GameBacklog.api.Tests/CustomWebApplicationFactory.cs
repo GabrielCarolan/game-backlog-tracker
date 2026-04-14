@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -10,6 +11,10 @@ namespace GameBacklog.api.Tests;
 
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
+    public const string TestJwtKey = "super-secret-test-key-for-jwt-signing-12345";
+    public const string TestJwtIssuer = "GameBacklog.Tests";
+    public const string TestJwtAudience = "GameBacklog.Tests.Client";
+
     private SqliteConnection? _connection;
 
     public async Task ExecuteDbContextAsync(Func<GameBacklogDbContext, Task> action)
@@ -22,6 +27,16 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
     // Override the WebApplicationFactory<Program> method to configure the test services
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        builder.ConfigureAppConfiguration((_, configBuilder) =>
+        {
+            configBuilder.AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Jwt:Key"] = TestJwtKey,
+                ["Jwt:Issuer"] = TestJwtIssuer,
+                ["Jwt:Audience"] = TestJwtAudience
+            });
+        });
+
         builder.ConfigureServices(services =>
         {
             services.RemoveAll<DbContextOptions<GameBacklogDbContext>>();
