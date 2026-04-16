@@ -11,7 +11,7 @@ public static class TestAuthHelper
         string email = "user@example.com",
         string password = "Password123!")
     {
-        var response = await client.PostAsJsonAsync("/api/auth/register", new RegisterRequest
+        var response = await client.PostAsJsonAsync("/api/auth/register", new RegisterRequest // RegisterRequest only creates normal users, so this is used for normal user tests
         {
             Email = email,
             Password = password
@@ -44,7 +44,7 @@ public static class TestAuthHelper
         string password = "Password123!")
     {
         var client = factory.CreateClient();
-        var auth = await RegisterAndGetAuthAsync(client, email, password);
+        var auth = await RegisterAndGetAuthAsync(client, email, password); // Automatically registers a new non-admin user and gets the token for that user
         AttachBearerToken(client, auth.Token);
         return client;
     }
@@ -54,6 +54,7 @@ public static class TestAuthHelper
         string email = "admin@example.com",
         string password = "Password123!")
     {
+        // Register only creates normal users, so admin tests seed an admin account and then log in for the token.
         await TestDataSeeder.SeedUserAsync(factory, email, password, role: "Admin");
 
         var client = factory.CreateClient();
