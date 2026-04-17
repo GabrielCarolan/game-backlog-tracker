@@ -66,4 +66,4 @@
 ## Current Review List
 - `api/GameBacklog.api.Tests/GamesEndpointsTests.cs`: added integration coverage for `GET /api/games`, including both the empty-list case and the seeded-data case.
 - `api/GameBacklog.api.Tests/UnitTest1.cs`: removed the template xUnit placeholder test file now that the test project has a real endpoint test.
-- `TODO.md`: checked off the `GET /api/games` checklist item and updated this review list for the files changed in this step.
+

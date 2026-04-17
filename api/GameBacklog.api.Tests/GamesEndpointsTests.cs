@@ -6,7 +6,7 @@ namespace GameBacklog.api.Tests;
 
 public class GamesEndpointsTests
 {
-    [Fact]
+    [Fact] // Indicates this is a single test case
     public async Task GetGames_ReturnsEmptyList_WhenNoGamesExist()
     {
         using var factory = new CustomWebApplicationFactory();
