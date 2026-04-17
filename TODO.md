@@ -23,7 +23,7 @@
 - [x] Replace the production DB registration with an isolated test database configuration.
 - [x] Add shared test data seeding helpers for users, games, and log entries.
 - [x] Add auth test helpers for obtaining/using JWTs in endpoint tests.
-- [ ] Add integration tests for `GET /api/games`.
+- [x] Add integration tests for `GET /api/games`.
 - [ ] Add integration tests for admin-only game create/update/delete endpoints.
 - [ ] Add integration tests for unauthenticated access rejection on `/api/log`.
 - [ ] Add integration tests for log create/update/delete flows.
@@ -64,5 +64,6 @@
 - Frontend admin navigation/route gating is implemented, even though the TODO item is phrased as backend role authorization.
 
 ## Current Review List
-- `api/GameBacklog.api.Tests/CustomWebApplicationFactory.cs`: added test-owned JWT configuration values so the test host can issue and validate tokens without depending on local user-secrets.
-- `api/GameBacklog.api.Tests/TestAuthHelper.cs`: added reusable helpers for registering/logging in test users, creating authenticated clients, creating admin clients, and attaching bearer tokens.
+- `api/GameBacklog.api.Tests/GamesEndpointsTests.cs`: added integration coverage for `GET /api/games`, including both the empty-list case and the seeded-data case.
+- `api/GameBacklog.api.Tests/UnitTest1.cs`: removed the template xUnit placeholder test file now that the test project has a real endpoint test.
+- `TODO.md`: checked off the `GET /api/games` checklist item and updated this review list for the files changed in this step.
