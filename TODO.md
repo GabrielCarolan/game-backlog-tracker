@@ -64,6 +64,6 @@
 - Frontend admin navigation/route gating is implemented, even though the TODO item is phrased as backend role authorization.
 
 ## Current Review List
+- `ui/game-backlog-ui/src/api/gamesApi.js`: fixed admin game create/update/delete requests to include the JWT bearer token; without it, admin UI actions returned `401` even when the logged-in user had the `Admin` role.
 - `api/GameBacklog.api.Tests/GamesEndpointsTests.cs`: added integration coverage for `GET /api/games`, including both the empty-list case and the seeded-data case.
 - `api/GameBacklog.api.Tests/UnitTest1.cs`: removed the template xUnit placeholder test file now that the test project has a real endpoint test.
-
